@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة تحكم سيلرينا | إضافة منتج</title>
+    <style>
+        body { background-color: #FFFBF5; font-family: sans-serif; padding: 50px; text-align: center; }
+        .form-container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: inline-block; width: 100%; max-width: 400px; }
+        input, textarea { width: 90%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; }
+        .file-label { display: block; padding: 10px; background: #eee; border-radius: 8px; cursor: pointer; margin-bottom: 10px; color: #666; }
+        button { background: #D4AF37; color: white; border: none; padding: 15px 30px; border-radius: 25px; cursor: pointer; width: 100%; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1 style="color: #D4AF37;">إضافة منتج لـ Sylrina ✨</h1>
+    <div class="form-container">
+        <input type="text" id="pName" placeholder="اسم المنتج (مثلاً: فستان سواريه)">
+        <input type="number" id="pPrice" placeholder="السعر (ج.م)">
+        <textarea id="pDesc" placeholder="وصف المنتج وتفاصيله"></textarea>
+        
+        <label class="file-label">اختر صورة المنتج من جهازك 📷
+            <input type="file" id="pImageFile" accept="image/*" style="display:none">
+        </label>
+        
+        <button onclick="saveProduct()">حفظ في المتجر 🚀</button>
+    </div>
+
+    <script>
+        function saveProduct() {
+            const name = document.getElementById('pName').value;
+            const file = document.getElementById('pImageFile').files[0];
+            
+            if(!name || !file) {
+                alert("من فضلك اكتبي اسم المنتج واختاري صورة الأول");
+                return;
+            }
+            
+            alert("تم اختيار الصورة: " + file.name + "\nجارٍ الحفظ في MongoDB...");
+            // هنا هنربط مع الداتابيز في الخطوة الجاية
+        }
+    </script>
+</body>
+</html>
