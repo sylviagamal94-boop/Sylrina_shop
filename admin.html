@@ -2,42 +2,130 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة تحكم سيلرينا | إضافة منتج</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sylrina | سيلرينا ستور</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #FFFBF5; font-family: sans-serif; padding: 50px; text-align: center; }
-        .form-container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: inline-block; width: 100%; max-width: 400px; }
-        input, textarea { width: 90%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; }
-        .file-label { display: block; padding: 10px; background: #eee; border-radius: 8px; cursor: pointer; margin-bottom: 10px; color: #666; }
-        button { background: #D4AF37; color: white; border: none; padding: 15px 30px; border-radius: 25px; cursor: pointer; width: 100%; font-weight: bold; }
+        body { font-family: 'Cairo', sans-serif; background-color: #fdfbf9; color: #4a4a4a; }
+        .luxury-gradient { background: linear-gradient(135deg, #e5d5c5 0%, #d4b89d 100%); }
+        .product-card:hover { transform: translateY(-5px); transition: 0.3s; }
     </style>
 </head>
 <body>
-    <h1 style="color: #D4AF37;">إضافة منتج لـ Sylrina ✨</h1>
-    <div class="form-container">
-        <input type="text" id="pName" placeholder="اسم المنتج (مثلاً: فستان سواريه)">
-        <input type="number" id="pPrice" placeholder="السعر (ج.م)">
-        <textarea id="pDesc" placeholder="وصف المنتج وتفاصيله"></textarea>
-        
-        <label class="file-label">اختر صورة المنتج من جهازك 📷
-            <input type="file" id="pImageFile" accept="image/*" style="display:none">
+
+    <div class="luxury-gradient text-white text-center py-2 text-sm font-bold">
+        ✨ شحن مجاني لأول طلب لفترة محدودة ✨
+    </div>
+
+    <nav class="flex justify-between items-center px-8 py-6 bg-white shadow-sm sticky top-0 z-50">
+        <div class="text-2xl font-bold tracking-widest text-[#d4b89d]">SYLRINA</div>
+        <div class="space-x-8 space-x-reverse hidden md:flex">
+            <a href="#" class="hover:text-[#d4b89d]">الرئيسية</a>
+            <a href="#" class="hover:text-[#d4b89d]">الفساتين</a>
+            <a href="/admin.html" class="hover:text-[#d4b89d]">لوحة التحكم</a>
+        </div>
+        <div class="relative cursor-pointer" onclick="toggleCart()">
+            🛒 <span id="cart-count" class="bg-[#d4b89d] text-white rounded-full px-2 text-xs absolute -top-2 -right-2">0</span>
+        </div>
+    </nav>
+
+    <section class="relative h-[70vh] flex items-center justify-center text-center bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=80&w=1920');">
+        <div class="absolute inset-0 bg-black/20"></div>
+        <div class="relative text-white px-4">
+            <h1 class="text-5xl md:text-7xl font-light mb-4">مجموعتنا الجديدة وصلت ✨</h1>
+            <p class="text-xl mb-8">اكتشفي الأناقة في كل قطعة</p>
+            <a href="#shop" class="bg-white text-black px-10 py-3 rounded-full hover:bg-[#e5d5c5] transition">تسوقي الآن</a>
+        </div>
+    </section>
+
+    <div class="container mx-auto px-4 mt-10 text-center">
+        <label class="inline-flex items-center cursor-pointer">
+            <span class="ml-3 text-gray-700 font-bold">تفعيل ضريبة القيمة المضافة (14%)</span>
+            <input type="checkbox" id="tax-toggle" class="sr-only peer" onchange="renderProducts()">
+            <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#d4b89d]"></div>
         </label>
-        
-        <button onclick="saveProduct()">حفظ في المتجر 🚀</button>
+    </div>
+
+    <div id="shop" class="container mx-auto px-4 py-16 grid grid-cols-1 md:grid-cols-3 gap-10">
+        </div>
+
+    <div id="cart-drawer" class="fixed inset-0 bg-black/50 z-[100] hidden">
+        <div class="absolute left-0 top-0 h-full w-full md:w-96 bg-white p-8 shadow-2xl">
+            <h2 class="text-2xl font-bold mb-6">سلتك</h2>
+            <div id="cart-items" class="space-y-4 mb-8"></div>
+            <hr class="mb-4">
+            <div class="text-xl font-bold mb-6">الإجمالي: <span id="cart-total">0</span> ج.م</div>
+            <button onclick="checkout()" class="w-full bg-black text-white py-4 rounded-lg">إتمام الطلب</button>
+            <button onclick="toggleCart()" class="w-full mt-4 text-gray-500">إغلاق</button>
+        </div>
     </div>
 
     <script>
-        function saveProduct() {
-            const name = document.getElementById('pName').value;
-            const file = document.getElementById('pImageFile').files[0];
-            
-            if(!name || !file) {
-                alert("من فضلك اكتبي اسم المنتج واختاري صورة الأول");
-                return;
+        let products = [];
+        let cart = [];
+
+        // Fetch products from API
+        async function loadProducts() {
+            try {
+                // ملاحظة: هنا بنفترض إنك عاملة API بيجيب المنتجات
+                const res = await fetch('/api/get-products'); 
+                products = await res.json();
+                renderProducts();
+            } catch (e) {
+                console.log("Database fetch failed, using sample data");
+                // بيانات تجريبية لو الداتابيز لسه فاضية
+                products = [{name: "فستان سهرة نود", price: 1200, img: "https://via.placeholder.com/300x400/e5d5c5"}];
+                renderProducts();
             }
-            
-            alert("تم اختيار الصورة: " + file.name + "\nجارٍ الحفظ في MongoDB...");
-            // هنا هنربط مع الداتابيز في الخطوة الجاية
         }
+
+        function renderProducts() {
+            const grid = document.getElementById('shop');
+            const isTaxed = document.getElementById('tax-toggle').checked;
+            grid.innerHTML = '';
+            
+            products.forEach(p => {
+                let finalPrice = isTaxed ? p.price * 1.14 : p.price;
+                grid.innerHTML += `
+                    <div class="product-card bg-white p-4 rounded-xl shadow-sm">
+                        <img src="${p.img}" class="w-full h-80 object-cover rounded-lg mb-4">
+                        <h3 class="text-lg font-bold">${p.name}</h3>
+                        <p class="text-[#d4b89d] font-bold mb-4">${finalPrice.toFixed(2)} ج.م</p>
+                        <button onclick="addToCart('${p.name}', ${finalPrice})" class="w-full border border-black py-2 hover:bg-black hover:text-white transition">أضيفي للسلة</button>
+                    </div>
+                `;
+            });
+        }
+
+        function addToCart(name, price) {
+            cart.push({name, price});
+            document.getElementById('cart-count').innerText = cart.length;
+            alert('تمت الإضافة للسلة! ✨');
+        }
+
+        function toggleCart() {
+            const drawer = document.getElementById('cart-drawer');
+            drawer.classList.toggle('hidden');
+            renderCart();
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items');
+            let total = 0;
+            container.innerHTML = '';
+            cart.forEach(item => {
+                total += item.price;
+                container.innerHTML += `<div class="flex justify-between"><span>${item.name}</span><span>${item.price} ج.م</span></div>`;
+            });
+            document.getElementById('cart-total').innerText = total.toFixed(2);
+        }
+
+        function checkout() {
+            alert('سيتم تحويلك لصفحة الدفع قريباً.. هذه الوظيفة تتطلب ربط Paymob أو بوابة دفع.');
+        }
+
+        loadProducts();
     </script>
 </body>
 </html>
